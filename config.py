@@ -147,6 +147,6 @@ screens = [
         #     power_now_file='current_now',
         # ),
         widget.Systray(),
-        widget.Clock('%Y-%m-%d %a [%H:%M] %p'),
+        widget.Clock('[%Y-%m-%d] %a [%H:%M]'),
     ], 30)) # our bar is 30px high
 ]
