@@ -4,11 +4,11 @@
 class Theme(object):
     bar = {
         'size': 24,
-        'background': '15181a',
+        'background': '000000',
     }
     widget = {
-        'font': 'Open Sans',
-        'fontsize': 11,
+        'font': 'Terminus',
+        'fontsize': 14,
         'background': bar['background'],
         'foreground': 'eeeeee',
     }
@@ -24,8 +24,10 @@ class Theme(object):
 
     groupbox = widget.copy()
     groupbox.update({
-        'padding': 2,
-        'borderwidth': 3,
+        'urgent_alert_method': 'border',
+        'padding': 4,
+        'borderwidth': 2,
+        'highlight_method': 'border',
     })
 
     sep = {
@@ -36,7 +38,7 @@ class Theme(object):
 
     systray = widget.copy()
     systray.update({
-        'icon_size': 16,
+        'icon_size': bar['size'],
         'padding': 3,
     })
 
@@ -54,9 +56,30 @@ class Theme(object):
         'format': '{char}{hour:d}:{min:02d}',
     })
 
+    clock = widget.copy()
+    clock.update({
+        'fmt': '[%Y-%m-%d] %a [%H:%M:%S]  ',
+        'fontsize': widget['fontsize'],
+        'padding': None,
+        'foreground': '008000',
+        'background': bar['background'],
+    })
+
     weather = widget.copy()
     weather.update({
         'update_interval': 60,
         'metric': False,
         'format': '{condition_text} {condition_temp}°',
+    })
+
+    spacer = widget.copy()
+    spacer.update({
+        'background': bar['background'],
+    })
+
+    sep = widget.copy()
+    sep.update({
+        'linewidth': 2,
+        'foreground': '808088',
+        'height_percent': 100,
     })
