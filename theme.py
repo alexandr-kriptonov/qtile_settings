@@ -8,7 +8,7 @@ class Theme(object):
     }
     widget = {
         'font': 'Terminus',
-        'fontsize': 14,
+        'fontsize': 20,
         'background': bar['background'],
         'foreground': 'eeeeee',
     }
@@ -61,7 +61,7 @@ class Theme(object):
         'fmt': '[%Y-%m-%d] %a [%H:%M:%S]  ',
         'fontsize': widget['fontsize'],
         'padding': None,
-        'foreground': '008000',
+        'foreground': 'eeeeee',
         'background': bar['background'],
     })
 
@@ -83,3 +83,14 @@ class Theme(object):
         'foreground': '808088',
         'height_percent': 100,
     })
+
+    thermalsensor = widget.copy()
+    thermalsensor.update({
+        'fontsize': widget['fontsize'],
+        'font': widget['font'],
+    })
+
+    notify = widget.copy()
+    # notify.update({
+    #     'text': "dfsdfdf",
+    # })
