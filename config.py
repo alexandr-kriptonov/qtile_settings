@@ -1,10 +1,16 @@
 from libqtile.config import Key, Screen, Group
+from libqtile.manager import Drag, Click
 from libqtile.command import lazy
 from libqtile import layout, bar, widget
 from theme import Theme
 
 mod = "mod4"
 MOD = 'mod4'
+alt = "mod1"
+
+def dFont(fs):
+    def_font = dict(font='Terminus', fontsize=fs, padding=5,)
+    return def_font
 
 keys = [
     # Switch between windows in current stack pane
@@ -37,6 +43,12 @@ keys = [
     Key(
         [mod, "shift"], "space",
         lazy.layout.rotate()
+    ),
+
+    Key(
+        [alt], "r",
+        lazy.spawn(
+            "dmenu_run -b -fn 'Terminus:size=14' -nb '#000000' -nf '#fefefe'")
     ),
 
     # Toggle between split and unsplit sides of stack.
@@ -139,6 +151,14 @@ floating_layout = layout.floating.Floating(float_rules=[{'wmclass': x} for x in 
 )])
 
 
+mouse = [
+    Drag([alt], "Button1", lazy.window.set_position_floating(),
+         start=lazy.window.get_position()),
+    Drag([alt], "Button3", lazy.window.set_size_floating(),
+         start=lazy.window.get_size()),
+    Click([alt], "Button2", lazy.window.bring_to_front())
+]
+
 # screens = [
 #     Screen(
 #         bottom=bar.Bar(
@@ -205,5 +225,6 @@ screens = [
             widget.Systray(**Theme.systray),
             widget.Sep(**Theme.sep),
             widget.Clock(**Theme.clock),
+            widget.Volume(foreground="70ff70", **dFont(20)),
     ], **Theme.bar)) # our bar is 35px high
 ]
