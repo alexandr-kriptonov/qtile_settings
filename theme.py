@@ -11,6 +11,7 @@ class Theme(object):
         'fontsize': 20,
         'background': bar['background'],
         'foreground': 'eeeeee',
+        'padding': 1,
     }
     graph = {
         'background': '000000',
@@ -21,56 +22,6 @@ class Theme(object):
         'margin_y': 0,
         'width': 50,
     }
-
-    groupbox = widget.copy()
-    groupbox.update({
-        'urgent_alert_method': 'border',
-        'padding': 4,
-        'borderwidth': 2,
-        'highlight_method': 'border',
-    })
-
-    sep = {
-        'background': bar['background'],
-        'foreground': '444444',
-        'height_percent': 75,
-    }
-
-    systray = widget.copy()
-    systray.update({
-        'icon_size': bar['size'],
-        'padding': 3,
-    })
-
-    battery = widget.copy()
-    #battery.update({
-    #    'energy_now_file': 'charge_now',
-    #    'energy_full_file': 'charge_full',
-    #    'power_now_file': 'current_now',
-    #    })
-
-    battery_text = battery.copy()
-    battery_text.update({
-        'charge_char': '↑ ',
-        'discharge_char': '↓ ',
-        'format': '{char}{hour:d}:{min:02d}',
-    })
-
-    clock = widget.copy()
-    clock.update({
-        'fmt': '[%Y-%m-%d] %a [%H:%M:%S]  ',
-        'fontsize': widget['fontsize'],
-        'padding': None,
-        'foreground': 'eeeeee',
-        'background': bar['background'],
-    })
-
-    weather = widget.copy()
-    weather.update({
-        'update_interval': 60,
-        'metric': False,
-        'format': '{condition_text} {condition_temp}°',
-    })
 
     spacer = widget.copy()
     spacer.update({
@@ -84,13 +35,76 @@ class Theme(object):
         'height_percent': 100,
     })
 
+    groupbox = widget.copy()
+    groupbox.update({
+        'urgent_alert_method': 'border',
+        'padding': widget['padding'],
+        'borderwidth': 2,
+        'highlight_method': 'border',
+    })
+
+    systray = widget.copy()
+    systray.update({
+        'icon_size': bar['size'],
+        'padding': widget['padding'],
+    })
+
+    battery = widget.copy()
+    battery.update({
+        'energy_now_file': 'charge_now',
+        'energy_full_file': 'charge_full',
+        'power_now_file': 'current_now',
+        'padding': widget['padding'],
+    })
+
+    battery_text = battery.copy()
+    battery_text.update({
+        'charge_char': '↑ ',
+        'discharge_char': '↓ ',
+        'format': '{char}{hour:d}:{min:02d}',
+        'padding': widget['padding'],
+    })
+
+    clock = widget.copy()
+    clock.update({
+        'fmt': '[%Y-%m-%d] %a [%H:%M:%S]  ',
+        'fontsize': widget['fontsize'],
+        'padding': widget['padding'],
+        'foreground': 'eeeeee',
+        'background': bar['background'],
+    })
+
+    weather = widget.copy()
+    weather.update({
+        'update_interval': 60,
+        'metric': False,
+        'format': '{condition_text} {condition_temp}°',
+        'padding': widget['padding'],
+    })
+
     thermalsensor = widget.copy()
     thermalsensor.update({
         'fontsize': widget['fontsize'],
         'font': widget['font'],
+        'padding': widget['padding'],
     })
 
     notify = widget.copy()
     # notify.update({
     #     'text': "dfsdfdf",
     # })
+
+    backlight = widget.copy()
+    backlight.update({
+        'fontsize': widget['fontsize'],
+        'font': widget['font'],
+        'padding': widget['padding'],
+    })
+
+    keyboard = widget.copy()
+    keyboard.update({
+        'fontsize': widget['fontsize'],
+        'font': widget['font'],
+        'configured_keyboards': ['us', 'ru'],
+        'padding': widget['padding'],
+    })

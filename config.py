@@ -27,6 +27,10 @@ keys = [
         lazy.layout.shuffle_up()
     ),
 
+    Key([mod, 'shift'], 'q', lazy.shutdown()),
+
+    Key([mod], 'e', lazy.spawn('pcmanfm')),
+
     # Switch window focus to other pane(s) of stack
     Key(
         [mod], "space",
@@ -89,7 +93,7 @@ group_setup = (
         'apps': {'wm_class': ('Komodo Edit',)},
     }),
     ('IM', {}),
-    ('SUBL', {'layout': 'max', }),
+    ('SUBL', {'layout': 'tile', }),
     ('URXVT', {
         'layout': 'max',
         'apps': {'wm_class': ('VirtualBox',)},
@@ -104,8 +108,8 @@ groups = []
 for idx, (name, config) in enumerate(group_setup):
     hotkey = str(idx + 1)
     groups.append(Group(name, layout=config.get('layout', 'tile')))
-    keys.append(Key([MOD], hotkey, lazy.group[name].toscreen()))
-    keys.append(Key([MOD, 'shift'], hotkey, lazy.window.togroup(name)))
+    keys.append(Key([mod], hotkey, lazy.group[name].toscreen()))
+    keys.append(Key([mod, 'shift'], hotkey, lazy.window.togroup(name)))
 
 dgroups_key_binder = None
 dgroups_app_rules = []
@@ -115,45 +119,45 @@ dgroups_app_rules = []
 #     layout.Stack(stacks=2)
 # ]
 
-layouts = (
-    layout.Tile(ratio=0.5),
-    layout.Max(),
-)
+# layouts = (
+#     layout.Tile(ratio=0.5),
+#     layout.Max(),
+# )
 
-floating_layout = layout.floating.Floating(float_rules=[{'wmclass': x} for x in (
-    #'audacious',
-    'Download',
-    'dropbox',
-    'file_progress',
-    'file-roller',
-    'gimp',
-    'Komodo_confirm_repl',
-    'Komodo_find2',
-    'pidgin',
-    #'skype',
-    'Update',  # Komodo update window
-    'Xephyr',
-    'Skype',
-    'skype',
-    'sublime-text',
-)])
+# floating_layout = layout.floating.Floating(float_rules=[{'wmclass': x} for x in (
+#     #'audacious',
+#     'Download',
+#     'dropbox',
+#     'file_progress',
+#     'file-roller',
+#     'gimp',
+#     'Komodo_confirm_repl',
+#     'Komodo_find2',
+#     'pidgin',
+#     'skype',
+#     'Update',  # Komodo update window
+#     'Xephyr',
+#     'Skype',
+#     'skype',
+#     'sublime-text',
+# )])
 
 
-# screens = [
-#     Screen(
-#         bottom=bar.Bar(
-#             [
-#                 widget.GroupBox(),
-#                 widget.Prompt(),
-#                 widget.WindowName(),
-#                 widget.TextBox("default config", name="default"),
-#                 widget.Systray(),
-#                 widget.Clock('%Y-%m-%d %a %I:%M %p'),
-#             ],
-#             30,
-#         ),
-#     ),
-# ]
+# # screens = [
+# #     Screen(
+# #         bottom=bar.Bar(
+# #             [
+# #                 widget.GroupBox(),
+# #                 widget.Prompt(),
+# #                 widget.WindowName(),
+# #                 widget.TextBox("default config", name="default"),
+# #                 widget.Systray(),
+# #                 widget.Clock('%Y-%m-%d %a %I:%M %p'),
+# #             ],
+# #             30,
+# #         ),
+# #     ),
+# # ]
 
 main = None
 follow_mouse_focus = True
@@ -194,16 +198,55 @@ screens = [
             widget.Sep(**Theme.sep),
             widget.MemoryGraph(graph_color='00FE81', fill_color='00B25B.3', **Theme.graph),
             widget.Sep(**Theme.sep),
-            widget.NetGraph(graph_color='ffff00', fill_color='4d4d00', interface='eth0',  **Theme.graph),
+            widget.NetGraph(graph_color='ffff00', fill_color='4d4d00', interface='wlan0',  **Theme.graph),
+            widget.HDDGraph(graph_color='ffff00', fill_color='4d4d00',  **Theme.graph),
             widget.Sep(**Theme.sep),
-            widget.ThermalSensor(**Theme.thermalsensor),
+            widget.BatteryIcon(**Theme.battery),
+            widget.Battery(**Theme.battery_text),
             widget.Sep(**Theme.sep),
-            widget.KeyboardLayout(),
+            widget.KeyboardLayout(**Theme.keyboard),
             widget.Sep(**Theme.sep),
             widget.CurrentLayout(**Theme.widget),
+            widget.Backlight(**Theme.backlight),
             widget.Sep(**Theme.sep),
             widget.Systray(**Theme.systray),
             widget.Sep(**Theme.sep),
             widget.Clock(**Theme.clock),
     ], **Theme.bar)) # our bar is 35px high
 ]
+
+
+#   Layouts Config
+# -------------------
+
+# Layout Theme
+layout_theme = {
+    "border_width": 2,
+    "margin": 3,
+#    "border_focus": "#5524555",
+#    "border_normal": "#5534555"
+    }
+
+layouts = [
+    layout.Max(**layout_theme),
+    layout.RatioTile(**layout_theme),
+    layout.MonadTall(**layout_theme),
+    layout.Stack(stacks=2, **layout_theme),
+    layout.Tile(shift_windows=True, **layout_theme),
+
+    # a layout just for gimp(stolen from tych0's config)
+    layout.Slice('left', 192, name='gimp', role='gimp-toolbox',
+         fallback=layout.Slice('right', 256, role='gimp-dock',
+         fallback=layout.Stack(stacks=1, **layout_theme))),
+]
+
+# Automatically float these types. This overrides the default behavior (which
+# is to also float utility types), but the default behavior breaks our fancy
+# gimp slice layout specified later on.
+floating_layout = layout.Floating(auto_float_types=[
+  "notification",
+  "toolbar",
+  "splash",
+  "dialog",
+], **layout_theme)
+
