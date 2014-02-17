@@ -5,6 +5,7 @@ from theme import Theme
 
 mod = "mod4"
 MOD = 'mod4'
+screenshot = 'scrot screenshot.png'
 
 keys = [
     # Switch between windows in current stack pane
@@ -26,6 +27,8 @@ keys = [
         [mod, "control"], "j",
         lazy.layout.shuffle_up()
     ),
+
+    Key([MOD], 'p', lazy.spawn(screenshot)),
 
     Key([mod, 'shift'], 'q', lazy.shutdown()),
 
