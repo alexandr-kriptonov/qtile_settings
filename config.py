@@ -5,13 +5,12 @@ from libqtile import layout, bar, widget
 from theme import Theme
 
 mod = "mod4"
-MOD = 'mod4'
 alt = "mod1"
+screenshot = 'scrot'
+file_manager = 'pcmanfm'
 
-def dFont(fs):
-    def_font = dict(font='Terminus', fontsize=fs, padding=5,)
-    return def_font
-
+#   Key shourtcuts Config
+# -------------------
 keys = [
     # Switch between windows in current stack pane
     Key(
@@ -38,6 +37,9 @@ keys = [
         [mod], "space",
         lazy.layout.next()
     ),
+
+    Key([mod], 'e', lazy.spawn(file_manager)),
+    Key([mod], 'p', lazy.spawn(screenshot)),
 
     # Swap panes of split stack
     Key(
@@ -69,28 +71,8 @@ keys = [
     Key([mod], "r", lazy.spawncmd()),
 ]
 
-# groups = [
-#     Group("1"),
-#     Group("2"),
-#     Group("3"),
-#     Group("4"),
-#     Group("5"),
-#     Group("6"),
-#     Group("7"),
-#     Group("8"),
-# ]
-# for i in groups:
-#     # mod1 + letter of group = switch to group
-#     keys.append(
-#         Key([mod], i.name, lazy.group[i.name].toscreen())
-#     )
-
-#     # mod1 + shift + letter of group = switch to & move focused window to group
-#     keys.append(
-#         Key([mod, "shift"], i.name, lazy.window.togroup(i.name))
-#     )
-
-##-> Groups
+#   Group Config
+# -------------------
 group_setup = (
     ('MAIN', {
         'layout': 'max',
@@ -116,41 +98,14 @@ groups = []
 for idx, (name, config) in enumerate(group_setup):
     hotkey = str(idx + 1)
     groups.append(Group(name, layout=config.get('layout', 'tile')))
-    keys.append(Key([MOD], hotkey, lazy.group[name].toscreen()))
-    keys.append(Key([MOD, 'shift'], hotkey, lazy.window.togroup(name)))
+    keys.append(Key([mod], hotkey, lazy.group[name].toscreen()))
+    keys.append(Key([mod, 'shift'], hotkey, lazy.window.togroup(name)))
 
 dgroups_key_binder = None
 dgroups_app_rules = []
 
-# layouts = [
-#     layout.Max(),
-#     layout.Stack(stacks=2)
-# ]
-
-layouts = (
-    layout.Tile(ratio=0.5),
-    layout.Max(),
-)
-
-floating_layout = layout.floating.Floating(float_rules=[{'wmclass': x} for x in (
-    #'audacious',
-    'Download',
-    'dropbox',
-    'file_progress',
-    'file-roller',
-    'gimp',
-    'Komodo_confirm_repl',
-    'Komodo_find2',
-    'pidgin',
-    #'skype',
-    'Update',  # Komodo update window
-    'Xephyr',
-    'Skype',
-    'skype',
-    'sublime-text',
-)])
-
-
+#   Mouse Config
+# -------------------
 mouse = [
     Drag([alt], "Button1", lazy.window.set_position_floating(),
          start=lazy.window.get_position()),
@@ -158,22 +113,6 @@ mouse = [
          start=lazy.window.get_size()),
     Click([alt], "Button2", lazy.window.bring_to_front())
 ]
-
-# screens = [
-#     Screen(
-#         bottom=bar.Bar(
-#             [
-#                 widget.GroupBox(),
-#                 widget.Prompt(),
-#                 widget.WindowName(),
-#                 widget.TextBox("default config", name="default"),
-#                 widget.Systray(),
-#                 widget.Clock('%Y-%m-%d %a %I:%M %p'),
-#             ],
-#             30,
-#         ),
-#     ),
-# ]
 
 main = None
 follow_mouse_focus = True
@@ -184,28 +123,11 @@ mouse = ()
 auto_fullscreen = True
 widget_defaults = {}
 
-
-# screens = [
-#     Screen(top=bar.Bar([
-#         widget.GroupBox(),    # display the current Group
-#         widget.Spacer(),
-#         # widget.BatteryIcon(),
-#         widget.CPUGraph(),
-#         widget.Canto(),
-#         # widget.Maildir(),R
-#         widget.Prompt(),
-#         widget.Notify(),
-#         widget.Battery(),      # display the battery stateRR
-#         widget.Sep(),
-#         widget.Volume(),
-#         widget.CurrentLayout(),
-#         widget.Clock(),
-#         widget.Systray(),
-#        ], 30))
-#    ]
+#   Widgets Config
+# -------------------
 screens = [
     Screen(
-        top = bar.Bar([
+        top=bar.Bar([
             widget.GroupBox(**Theme.groupbox),
             widget.Sep(**Theme.sep),
             widget.Spacer(),
@@ -218,13 +140,58 @@ screens = [
             widget.Sep(**Theme.sep),
             widget.ThermalSensor(**Theme.thermalsensor),
             widget.Sep(**Theme.sep),
+            widget.HDDGraph(graph_color='f72900', fill_color='4d4d00',  **Theme.graph),
+            widget.Sep(**Theme.sep),
             widget.KeyboardLayout(),
             widget.Sep(**Theme.sep),
             widget.CurrentLayout(**Theme.widget),
             widget.Sep(**Theme.sep),
             widget.Systray(**Theme.systray),
             widget.Sep(**Theme.sep),
-            widget.Clock(**Theme.clock),
-            widget.Volume(foreground="70ff70", **dFont(20)),
-    ], **Theme.bar)) # our bar is 35px high
+            widget.Clock(**Theme.clock), ],
+            **Theme.bar))]
+
+
+#   Layouts Config
+# -------------------
+
+# Layout Theme
+layout_theme = {
+    "border_width": 2,
+    "margin": 3,
+    # "border_focus": "#5524555",
+    # "border_normal": "#5534555"
+}
+
+layouts = [
+    layout.Max(**layout_theme),
+    layout.RatioTile(**layout_theme),
+    layout.MonadTall(**layout_theme),
+    layout.Stack(stacks=2, **layout_theme),
+    layout.Tile(shift_windows=True, **layout_theme),
+    layout.Slice(
+        'left',
+        192,
+        name='slice',
+        role='gimp-toolbox',
+        fallback=layout.Slice('right', 256, role='gimp-dock',
+        fallback=layout.Stack(stacks=1, **layout_theme))),
 ]
+
+floating_layout = layout.floating.Floating(float_rules=[{'wmclass': x} for x in (
+    #'audacious',
+    'Download',
+    'dropbox',
+    'file_progress',
+    'file-roller',
+    'gimp',
+    'Komodo_confirm_repl',
+    'Komodo_find2',
+    'pidgin',
+    'skype',
+    'Update',
+    'Xephyr',
+    'Skype',
+    'skype',
+    'sublime-text', )],
+    **layout_theme)
