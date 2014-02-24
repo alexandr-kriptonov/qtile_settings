@@ -207,6 +207,8 @@ screens = [
             widget.BatteryIcon(**Theme.battery),
             widget.Battery(**Theme.battery_text),
             widget.Sep(**Theme.sep),
+            widget.Wlan(**Theme.wifi),
+            widget.Sep(**Theme.sep),
             widget.KeyboardLayout(**Theme.keyboard),
             widget.Sep(**Theme.sep),
             widget.CurrentLayout(**Theme.widget),

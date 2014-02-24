@@ -108,3 +108,10 @@ class Theme(object):
         'configured_keyboards': ['us', 'ru'],
         'padding': widget['padding'],
     })
+
+    wifi = widget.copy()
+    wifi.update({
+        'fontsize': widget['fontsize'],
+        'font': widget['font'],
+        'padding': widget['padding'],
+        })
