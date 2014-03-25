@@ -1,91 +1,162 @@
-from libqtile.config import Key, Screen, Group
+from libqtile.config import Key, Screen, Group, Drag, Click
 from libqtile.command import lazy
-from libqtile import layout, bar, widget
+from libqtile import layout, bar, widget, hook
+from libqtile.layout import floating
 from theme import Theme
 
-mod = "mod4"
-MOD = 'mod4'
 screenshot = 'scrot screenshot.png'
+filemanager = "thunar"
+
+############################# KEYBOARD BINDINGS ################################
+
+mod = "mod4"
 
 keys = [
-    # Switch between windows in current stack pane
+
     Key(
-        [mod], "k",
+        [mod, "shift"],
+        "q",
+        lazy.shutdown()
+    ),
+    Key(
+        [mod, "shift"],
+        "r",
+        lazy.restart()
+    ),
+    Key(
+        [mod, "shift"],
+        "c",
+        lazy.window.kill()
+    ),
+    Key(
+        [mod],
+        "r",
+        lazy.spawn("dmenu_run -b -fn 'Terminus:size=14' -nb '#000000' -nf '#fefefe'")
+    ),
+    Key(
+        [mod],
+        "Return",
+        lazy.spawn("rxvt-unicode")
+    ),
+    Key(
+        [mod],
+        "k",
+        lazy.layout.up()
+    ),
+    Key(
+        [mod],
+        "j",
         lazy.layout.down()
     ),
     Key(
-        [mod], "j",
+        [mod],
+        "Tab",
         lazy.layout.up()
     ),
-
-    # Move windows up or down in current stack
     Key(
-        [mod, "control"], "k",
-        lazy.layout.shuffle_down()
+        [mod, "shift"],
+        "Tab",
+        lazy.layout.down()
     ),
     Key(
-        [mod, "control"], "j",
-        lazy.layout.shuffle_up()
+        [mod],
+        "h",
+        lazy.layout.previous()
     ),
-
-    Key([MOD], 'p', lazy.spawn(screenshot)),
-
-    Key([mod, 'shift'], 'q', lazy.shutdown()),
-
-    Key([mod], 'e', lazy.spawn('pcmanfm')),
-
-    # Switch window focus to other pane(s) of stack
     Key(
-        [mod], "space",
+        [mod],
+        "l",
         lazy.layout.next()
     ),
-
-    # Swap panes of split stack
     Key(
-        [mod, "shift"], "space",
+        [mod],
+        "space",
+        lazy.nextlayout()
+    ),
+    Key(
+        [mod, "shift"],
+        "space",
+        lazy.prevlayout()
+    ),
+    Key(
+        [mod],
+        "Left",
+        lazy.group.prevgroup()
+    ),
+    Key(
+        [mod],
+        "Right",
+        lazy.group.nextgroup()
+    ),
+    Key(
+        [mod, "shift"],
+        "Left",
+        lazy.to_next_screen()
+    ),
+    Key(
+        [mod, "shift"],
+        "Right",
+        lazy.to_prev_screen()
+    ),
+    Key(
+        [mod, "shift"],
+        "space",
         lazy.layout.rotate()
     ),
-
-    # Toggle between split and unsplit sides of stack.
-    # Split = all windows displayed
-    # Unsplit = 1 window displayed, like Max layout, but still with
-    # multiple stack panes
     Key(
-        [mod, "shift"], "Return",
+        [mod, "shift"],
+        "Return",
         lazy.layout.toggle_split()
     ),
-    Key([mod], "Return", lazy.spawn("rxvt-unicode")),
+    Key(
+        [], "XF86AudioRaiseVolume",
+        lazy.spawn("amixer -c 0 -q set Master 2dB+")
+    ),
+    Key(
+        [], "XF86AudioLowerVolume",
+        lazy.spawn("amixer -c 0 -q set Master 2dB-")
+    ),
+    Key(
+        [], "XF86AudioMute",
+        lazy.spawn("amixer -c 0 -q set Master toggle")
+    ),
 
-    # Toggle between different layouts as defined below
-    Key([mod], "Tab",    lazy.nextlayout()),
-    Key([mod, "shift"], "c",      lazy.window.kill()),
-
-    Key([mod, "shift"], "r", lazy.restart()),
-    Key([mod], "r", lazy.spawncmd()),
+    Key(
+        [], "XF86ScreenSaver",
+        lazy.spawn("xscreensaver-command -lock")
+    ),
+    Key(
+        [mod],
+        'e',
+        lazy.spawn(filemanager)
+    ),
+    Key(
+        [mod],
+        'p',
+        lazy.spawn(screenshot)
+    ),
 ]
 
-# groups = [
-#     Group("1"),
-#     Group("2"),
-#     Group("3"),
-#     Group("4"),
-#     Group("5"),
-#     Group("6"),
-#     Group("7"),
-#     Group("8"),
-# ]
-# for i in groups:
-#     # mod1 + letter of group = switch to group
-#     keys.append(
-#         Key([mod], i.name, lazy.group[i.name].toscreen())
-#     )
+############################## MOUSE BINDINGS ##################################
 
-#     # mod1 + shift + letter of group = switch to & move focused window to group
-#     keys.append(
-#         Key([mod, "shift"], i.name, lazy.window.togroup(i.name))
-#     )
+mouse = [
+    Drag(
+        [mod],
+        "Button1",
+        lazy.window.set_position_floating(),
+        start=lazy.window.get_position()),
+    Drag(
+        [mod], "Button3",
+        lazy.window.set_size_floating(),
+        start=lazy.window.get_size()),
+    Click(
+        [mod],
+        "Button2",
+        lazy.window.bring_to_front())
+]
 
-##-> Groups
+##################################  GROUPS  ####################################
+
 group_setup = (
     ('MAIN', {
         'layout': 'max',
@@ -117,51 +188,6 @@ for idx, (name, config) in enumerate(group_setup):
 dgroups_key_binder = None
 dgroups_app_rules = []
 
-# layouts = [
-#     layout.Max(),
-#     layout.Stack(stacks=2)
-# ]
-
-# layouts = (
-#     layout.Tile(ratio=0.5),
-#     layout.Max(),
-# )
-
-# floating_layout = layout.floating.Floating(float_rules=[{'wmclass': x} for x in (
-#     #'audacious',
-#     'Download',
-#     'dropbox',
-#     'file_progress',
-#     'file-roller',
-#     'gimp',
-#     'Komodo_confirm_repl',
-#     'Komodo_find2',
-#     'pidgin',
-#     'skype',
-#     'Update',  # Komodo update window
-#     'Xephyr',
-#     'Skype',
-#     'skype',
-#     'sublime-text',
-# )])
-
-
-# # screens = [
-# #     Screen(
-# #         bottom=bar.Bar(
-# #             [
-# #                 widget.GroupBox(),
-# #                 widget.Prompt(),
-# #                 widget.WindowName(),
-# #                 widget.TextBox("default config", name="default"),
-# #                 widget.Systray(),
-# #                 widget.Clock('%Y-%m-%d %a %I:%M %p'),
-# #             ],
-# #             30,
-# #         ),
-# #     ),
-# # ]
-
 main = None
 follow_mouse_focus = True
 bring_front_click = False
@@ -171,33 +197,57 @@ mouse = ()
 auto_fullscreen = True
 widget_defaults = {}
 
+##################################  LAYOUTS  ###################################
 
-# screens = [
-#     Screen(top=bar.Bar([
-#         widget.GroupBox(),    # display the current Group
-#         widget.Spacer(),
-#         # widget.BatteryIcon(),
-#         widget.CPUGraph(),
-#         widget.Canto(),
-#         # widget.Maildir(),R
-#         widget.Prompt(),
-#         widget.Notify(),
-#         widget.Battery(),      # display the battery stateRR
-#         widget.Sep(),
-#         widget.Volume(),
-#         widget.CurrentLayout(),
-#         widget.Clock(),
-#         widget.Systray(),
-#        ], 30))
-#    ]
+# Layout Theme
+layout_theme = {
+    "border_width": 3,
+    "margin": 3,
+    "border_focus": "#0038D4",
+    "border_normal": "#555555"
+}
+
+layouts = [
+    layout.Max(**layout_theme),
+    layout.RatioTile(**layout_theme),
+    layout.MonadTall(**layout_theme),
+    layout.Stack(stacks=2, **layout_theme),
+    layout.Tile(shift_windows=True, **layout_theme),
+    layout.TreeTab(),  # display tree windows on left
+    # a layout just for gimp(stolen from tych0's config)
+    layout.Slice(
+        'left',
+        192,
+        name='gimp',
+        role='gimp-toolbox',
+        fallback=layout.Slice('right', 256, role='gimp-dock',
+        fallback=layout.Stack(stacks=1, **layout_theme))
+    ),
+]
+
+floating_layout = layout.Floating(
+    auto_float_types=floating.DEFAULT_FLOAT_WM_TYPES,
+    float_rules=[
+        dict(wmclass="spotify"),
+        dict(wmclass="gnome-calculator"),
+        dict(wname="Unlock Login Keyring")
+    ],
+    **layout_theme
+)
+
+
+@hook.subscribe.client_new
+def floating_dialogs(window):
+    if(window.window.get_wm_type() == 'dialog' or window.window.get_wm_transient_for()):
+        window.floating = True
+
 screens = [
     Screen(
-        top = bar.Bar([
+        top=bar.Bar([
             widget.GroupBox(**Theme.groupbox),
             widget.Sep(**Theme.sep),
             widget.Spacer(),
             # widget.CPUGraph(graph_color='18BAEB', fill_color='1667EB.3', **Theme.graph),
-            widget.Prompt(),
             widget.Sep(**Theme.sep),
             widget.MemoryGraph(graph_color='00FE81', fill_color='00B25B.3', **Theme.graph),
             widget.Sep(**Theme.sep),
@@ -212,46 +262,10 @@ screens = [
             widget.KeyboardLayout(**Theme.keyboard),
             widget.Sep(**Theme.sep),
             widget.CurrentLayout(**Theme.widget),
-            widget.Backlight(**Theme.backlight),
+            # widget.Backlight(**Theme.backlight),
             widget.Sep(**Theme.sep),
             widget.Systray(**Theme.systray),
             widget.Sep(**Theme.sep),
             widget.Clock(**Theme.clock),
-    ], **Theme.bar)) # our bar is 35px high
+        ], **Theme.bar))
 ]
-
-
-#   Layouts Config
-# -------------------
-
-# Layout Theme
-layout_theme = {
-    "border_width": 2,
-    "margin": 3,
-#    "border_focus": "#5524555",
-#    "border_normal": "#5534555"
-    }
-
-layouts = [
-    layout.Max(**layout_theme),
-    layout.RatioTile(**layout_theme),
-    layout.MonadTall(**layout_theme),
-    layout.Stack(stacks=2, **layout_theme),
-    layout.Tile(shift_windows=True, **layout_theme),
-
-    # a layout just for gimp(stolen from tych0's config)
-    layout.Slice('left', 192, name='gimp', role='gimp-toolbox',
-         fallback=layout.Slice('right', 256, role='gimp-dock',
-         fallback=layout.Stack(stacks=1, **layout_theme))),
-]
-
-# Automatically float these types. This overrides the default behavior (which
-# is to also float utility types), but the default behavior breaks our fancy
-# gimp slice layout specified later on.
-floating_layout = layout.Floating(auto_float_types=[
-  "notification",
-  "toolbar",
-  "splash",
-  "dialog",
-], **layout_theme)
-
